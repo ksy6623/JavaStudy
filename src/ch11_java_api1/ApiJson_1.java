@@ -1,10 +1,9 @@
-package ch11_java_api;
+package ch11_java_api1;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.ResponseCache;
 import java.net.URL;
+import java.text.DecimalFormat;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -12,7 +11,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
-public class ApiJson {
+public class ApiJson_1 {
 	public static void main(String[] args) throws Exception {
 		// upbit rest api 코인 종목 리스트를 제공함 get 방식에 json 데이터 형태로
 		// json(Javascript Object Notation)
@@ -44,6 +43,44 @@ public class ApiJson {
 				System.out.println("marker:" + obj.get("market"));
 				System.out.println("kor" + obj.get("korean_name"));
 			}
+			System.out.println("상세 정보 ============");
+			JSONObject resultObj = getCoin("KRW-RTC");
+			System.out.println(resultObj.get("trade_date"));
+			System.out.println(resultObj.get("trade_price"));
+			
+			DecimalFormat format = new DecimalFormat("#,###.##");
+			System.out.println(format.format(resultObj.get("trade_price")));
 		}
 	}
+	// input : String (코인코드)
+	// output : JSONObjct (헤당 코드 현재 정보)
+	public static JSONObject getCoin(String code) throws Exception {
+	    String detailUrl = "https://api.upbit.com/v1/ticker?markets=" + code;
+	    URL url = new URL(detailUrl);
+	    HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
+	    conn.setRequestMethod("GET");
+	    int resCode = conn.getResponseCode();
+	    JSONObject obj = null;
+	    System.out.println("상세정보 응답코드: " + resCode);  // 응답코드 확인
+
+	    if (resCode == 200) {
+	        BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+	        String inputLine;
+	        StringBuffer res = new StringBuffer();
+	        while((inputLine = in.readLine()) != null) {
+	            res.append(inputLine);
+	        }
+	        in.close();
+	        
+	        System.out.println("상세정보 응답: " + res.toString());  // 응답 데이터 확인
+	        
+	        JSONParser parser = new JSONParser();
+	        JSONArray arr = (JSONArray) parser.parse(res.toString());
+	        if(arr != null && !arr.isEmpty()) {  // 배열이 비어있지 않은지 확인
+	            obj = (JSONObject) arr.get(0);
+	        }
+	    }
+	    return obj;
+	}
+
 }
