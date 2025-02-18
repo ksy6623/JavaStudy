@@ -14,7 +14,7 @@ public class ChatClient {
 		System.err.println(">>");
 		String nm = scan.nextLine();
 		try {
-			Socket soc = new Socket("192.168.0.12",5000);
+			Socket soc = new Socket("192.168.0.25",5000);
 			System.out.println("접속! 성공!");
 			// 데이터 송수신
 			SendThread send = new SendThread(soc, nm);

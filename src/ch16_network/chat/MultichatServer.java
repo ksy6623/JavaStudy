@@ -14,7 +14,8 @@ public class MultichatServer {
 	private ArrayList<Client> clientList = new ArrayList<>();
 	
 	public static void main(String[] args) {
-	
+		MultichatServer server = new MultichatServer();
+	    server.serverStart();
 	}
 	public void serverStart() {
 		ServerSocket server = null;
